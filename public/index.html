@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CS Quiz Portal</title>
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --card: #fff;
+        --tx: #1b1f2a;
+        --mu: #6b7280;
+        --ac: #4f46e5;
+        --ac2: #eef0ff;
+        --ok: #16a34a;
+        --bad: #dc2626;
+        --bd: #e5e7eb;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f1117;
+          --card: #1a1d27;
+          --tx: #e8eaf0;
+          --mu: #9aa1b2;
+          --ac: #818cf8;
+          --ac2: #25294a;
+          --ok: #4ade80;
+          --bad: #f87171;
+          --bd: #2c3040;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--tx);
+        font:
+          16px/1.5 system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          sans-serif;
+      }
+      .wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--bd);
+        border-radius: 14px;
+        padding: 20px;
+        margin-top: 12px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 8px 0;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 0 0 12px;
+      }
+      label {
+        display: block;
+        font-size: 14px;
+        color: var(--mu);
+        margin: 12px 0 4px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--bd);
+        background: var(--bg);
+        color: var(--tx);
+        font-size: 16px;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 0;
+        border-radius: 10px;
+        padding: 12px 18px;
+        background: var(--ac);
+        color: #fff;
+        font-weight: 600;
+      }
+      button.sec {
+        background: var(--ac2);
+        color: var(--ac);
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      .full {
+        width: 100%;
+        margin-top: 16px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        padding: 8px 0;
+        z-index: 5;
+      }
+      .timer {
+        font-variant-numeric: tabular-nums;
+        font-weight: 700;
+        font-size: 18px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: var(--ac2);
+        color: var(--ac);
+      }
+      .timer.low {
+        background: var(--bad);
+        color: #fff;
+      }
+      .opt {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin-top: 10px;
+        padding: 14px;
+        border: 2px solid var(--bd);
+        background: var(--card);
+        color: var(--tx);
+        font-weight: 500;
+        border-radius: 10px;
+      }
+      .opt.sel {
+        border-color: var(--ac);
+        background: var(--ac2);
+      }
+      .opt.ok {
+        border-color: var(--ok);
+      }
+      .opt.no {
+        border-color: var(--bad);
+      }
+      .dots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+      }
+      .dot {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--tx);
+        border: 1px solid var(--bd);
+        font-size: 13px;
+      }
+      .dot.ans {
+        background: var(--ac2);
+        border-color: var(--ac);
+      }
+      .dot.cur {
+        background: var(--ac);
+        color: #fff;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .row button {
+        flex: 1;
+      }
+      .score {
+        font-size: 56px;
+        font-weight: 800;
+        text-align: center;
+        color: var(--ac);
+        margin: 4px 0;
+      }
+      .mu {
+        color: var(--mu);
+        font-size: 14px;
+        text-align: center;
+      }
+      .rev {
+        border-top: 1px solid var(--bd);
+        padding-top: 14px;
+        margin-top: 14px;
+      }
+      .hide {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>💻 CS Quiz Portal</h1>
+
+      <div id="login" class="card">
+        <h2>Student login</h2>
+        <label for="nm">Full name</label
+        ><input id="nm" type="text" autocomplete="name" />
+        <label for="rl">Roll / enrollment no.</label
+        ><input id="rl" type="text" />
+        <p class="mu" style="text-align: left; color: var(--bad)" id="msg"></p>
+        <button class="full" id="start">Start quiz</button>
+      </div>
+
+      <div id="quiz" class="hide">
+        <div class="top">
+          <span id="prog" class="mu"></span
+          ><span id="tm" class="timer">10:00</span>
+        </div>
+        <div class="card">
+          <h2 id="qt"></h2>
+          <div id="opts"></div>
+          <div class="row">
+            <button class="sec" id="prev">← Back</button
+            ><button id="next">Next →</button>
+          </div>
+          <div class="dots" id="dots"></div>
+          <button class="full sec" id="sub">Submit quiz</button>
+        </div>
+      </div>
+
+      <div id="res" class="hide">
+        <div class="card">
+          <div class="mu" id="who"></div>
+          <div class="score" id="sc"></div>
+          <div class="mu" id="pc"></div>
+          <button class="full" id="again">Back to login</button>
+        </div>
+        <div class="card">
+          <h2>Review</h2>
+          <div id="rv"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let qs = [],
+        ans = [],
+        cur = 0,
+        left = 0,
+        iv = null,
+        user = {},
+        attemptId = null,
+        busy = false;
+      const show = (id) =>
+        ["login", "quiz", "res"].forEach((x) =>
+          $(x).classList.toggle("hide", x !== id),
+        );
+
+      async function api(path, body) {
+        const r = await fetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || "Server error");
+        return d;
+      }
+
+      $("start").onclick = async () => {
+        const n = $("nm").value.trim(),
+          r = $("rl").value.trim();
+        if (!n || !r) {
+          $("msg").textContent = "Please enter your name and roll number.";
+          return;
+        }
+        $("start").disabled = true;
+        $("msg").textContent = "";
+        try {
+          const d = await api("/api/start", { name: n, roll: r });
+          user = { n: d.student.name, r: d.student.roll_no };
+          attemptId = d.attemptId;
+          qs = d.questions;
+          ans = Array(qs.length).fill(null);
+          cur = 0;
+          left = d.remaining;
+          busy = false;
+          show("quiz");
+          render();
+          tick();
+          clearInterval(iv);
+          iv = setInterval(tick, 1000);
+        } catch (e) {
+          $("msg").textContent = e.message;
+        }
+        $("start").disabled = false;
+      };
+
+      function tick() {
+        const m = Math.floor(left / 60),
+          s = left % 60;
+        $("tm").textContent = `${m}:${String(s).padStart(2, "0")}`;
+        $("tm").classList.toggle("low", left <= 60);
+        if (left <= 0) {
+          finish(true);
+          return;
+        }
+        left--;
+      }
+
+      function render() {
+        const q = qs[cur];
+        $("prog").textContent = `Question ${cur + 1} of ${qs.length}`;
+        $("qt").textContent = q.q;
+        $("opts").innerHTML = "";
+        q.o.forEach((t, i) => {
+          const b = document.createElement("button");
+          b.className = "opt" + (ans[cur] === i ? " sel" : "");
+          b.textContent = String.fromCharCode(65 + i) + ".  " + t;
+          b.onclick = () => {
+            ans[cur] = i;
+            render();
+          };
+          $("opts").appendChild(b);
+        });
+        $("prev").disabled = cur === 0;
+        $("next").disabled = cur === qs.length - 1;
+        $("dots").innerHTML = "";
+        qs.forEach((_, i) => {
+          const d = document.createElement("button");
+          d.className =
+            "dot" + (ans[i] !== null ? " ans" : "") + (i === cur ? " cur" : "");
+          d.textContent = i + 1;
+          d.onclick = () => {
+            cur = i;
+            render();
+          };
+          $("dots").appendChild(d);
+        });
+      }
+      $("prev").onclick = () => {
+        cur--;
+        render();
+      };
+      $("next").onclick = () => {
+        cur++;
+        render();
+      };
+      $("sub").onclick = () => {
+        const un = ans.filter((a) => a === null).length;
+        if (
+          confirm(
+            un
+              ? `${un} question(s) unanswered. Submit anyway?`
+              : "Submit your quiz?",
+          )
+        )
+          finish(false);
+      };
+
+      async function finish(auto) {
+        if (busy) return;
+        busy = true;
+        clearInterval(iv);
+        try {
+          const d = await api("/api/submit", {
+            attemptId,
+            roll: user.r,
+            answers: ans,
+          });
+          $("who").textContent =
+            `${user.n} (${user.r})` + (auto ? " • time's up" : "");
+          $("sc").textContent = `${d.score}/${d.total}`;
+          $("pc").textContent =
+            `${Math.round((d.score / d.total) * 100)}% correct`;
+          const rv = $("rv");
+          rv.innerHTML = "";
+          d.review.forEach((q, i) => {
+            const box = document.createElement("div");
+            box.className = i ? "rev" : "";
+            const h = document.createElement("strong");
+            h.textContent = `${i + 1}. ${q.q}`;
+            box.appendChild(h);
+            q.o.forEach((t, j) => {
+              const o = document.createElement("div");
+              o.className =
+                "opt" + (j === q.a ? " ok" : q.yours === j ? " no" : "");
+              o.style.padding = "8px 12px";
+              o.textContent =
+                String.fromCharCode(65 + j) +
+                ". " +
+                t +
+                (j === q.a ? "  ✓" : q.yours === j ? "  ✗ your answer" : "");
+              box.appendChild(o);
+            });
+            rv.appendChild(box);
+          });
+          show("res");
+          window.scrollTo(0, 0);
+        } catch (e) {
+          alert(e.message);
+          busy = false;
+        }
+      }
+      $("again").onclick = () => {
+        show("login");
+        $("msg").textContent = "";
+      };
+    </script>
+  </body>
+</html>
